@@ -82,7 +82,7 @@ install-mysql() {
   echo "waiting 10 seconds for db to initialize..."
   sleep 10
   sudo mysql --user=root \
-    -e "UPDATE user SET authentication_string='Cyberark1' WHERE user='root'; UPDATE user SET plugin='mysql_native_password' WHERE User='root'; FLUSH PRIVILEGES;"
+    -e "USE DATABASE mysql; UPDATE user SET authentication_string='Cyberark1' WHERE user='root'; UPDATE user SET plugin='mysql_native_password' WHERE User='root'; FLUSH PRIVILEGES;"
   for i in $(ps -aux | grep mysql | grep -v grep | awk '{print $2}'); do
     sudo kill -9 "$i"
   done
