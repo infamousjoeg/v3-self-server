@@ -64,10 +64,10 @@ install-tomcat() {
 }
 
 #############################
-# It is weirdly difficult to initialize the mysql root user password.
-# If this process doesn't work for some reason, check out what others tried:
-# https://www.google.com/search?q=mysql+server+5.7.34+set+root+password+ubuntu+18.04
-#
+# Please see below and comment/uncomment based on
+# MySQL version installed.
+# $ mysql -V
+# Note: Vagrant has MySQL v8 installed.
 install-mysql() {
   sudo apt update -y
   sudo apt install -y mysql-server
@@ -81,8 +81,12 @@ install-mysql() {
   echo
   echo "waiting 10 seconds for db to initialize..."
   sleep 10
+  ######## MYSQL 8.x
   sudo mysql --user=root \
-    -e "USE mysql; UPDATE user SET authentication_string='Cyberark1' WHERE user='root'; UPDATE user SET plugin='mysql_native_password' WHERE User='root'; FLUSH PRIVILEGES;"
+    -e "UPDATE mysql.user SET authentication_string=null WHERE user='root'; FLUSH PRIVILEGES; ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Cyberark1'; FLUSH PRIVILEGES;"
+  ######## MYSQL 5.x
+  # sudo mysql --user=root \
+  #   -e "UPDATE mysql.user SET authentication_string=PASSWORD('Cyberark1') WHERE user='root'; UPDATE mysql.user SET plugin='mysql_native_password' WHERE user='root'; FLUSH PRIVILEGES;"
   for i in $(ps -aux | grep mysql | grep -v grep | awk '{print $2}'); do
     sudo kill -9 "$i"
   done
