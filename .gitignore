@@ -1,1 +1,3 @@
-cybrselfserve.properties
+*.properties
+*.config
+*.box
